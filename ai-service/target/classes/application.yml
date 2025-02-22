@@ -1,0 +1,21 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: ai-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+  resttemplate:
+    # 配置 RestTemplate 如果需要的其他细节
+     connect-timeout: 5000  # 连接超时时间
+     read-timeout: 5000     # 读取超时时间
+
+ai:
+  api:
+    url: https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions    # 大模型的 API 地址
+    api-key: sk-93bfe4546c374e23987764507288eb94  # API 密钥（如果需要）
