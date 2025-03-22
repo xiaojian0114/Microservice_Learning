@@ -1,0 +1,63 @@
+server:
+  port: 9090
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: mqtt_route
+          uri: lb://mqtt-service
+          predicates:
+            - Path=/mqtt/**
+            - TimeBetween=15:00,20:00
+            - Header=message, \d+
+          filters:
+#            - RewritePath=/mqtt/(?<segment>.*), /mqtt/$\{segment}  # 不修改路径
+#            - StripPrefix=1
+
+        - id: user_route
+          order: 1
+          uri: lb://user-service  #路由匹配地址，从注册中心根据服务名称进行负载均衡
+          predicates:
+            - Path=/user/**
+#            - Method=GET
+#            - Query=userId, 123
+#            - Header=token, \d+
+            - Before=2025-03-20T23:59:59+08:00
+#            - JDK=22
+
+          filters:
+            - StripPrefix=1
+#            - InvalidParameter=token,-1
+        - id: content_route
+          order: 1
+          uri: lb://content-service
+          predicates:
+            - Path=/content-service/**
+            - Method=GET
+          filters:
+            - StripPrefix=1
+    sentinel:
+      filter:
+        enabled: true
+      transport:
+        port: 8719
+        dashboard: localhost:8888
+      scg:
+        fallback:
+          mode: response
+          response-status: 500
+          response-body: '{"code":"500","msg":"网关流量超量"}'
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,gateway
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.loadbalancer: DEBUG
+    reactor.netty: DEBUG
+

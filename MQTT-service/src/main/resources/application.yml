@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: mqtt-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848  # Nacos ??
+        namespace: public
+        group: DEFAULT_GROUP
+        username: nacos
+        password: nacos
+
+mqtt:
+  broker: tcp://test.mosquitto.org:1883  # ?? MQTT ?????
+  client-id: mqtt-client
+  topic: test/topic
+  client-id-inbound: mqtt-client-inbound
+  client-id-outbound: mqtt-client-outbound
+
+
